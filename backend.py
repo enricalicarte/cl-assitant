@@ -1,63 +1,90 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
-import requests
+import openai
+import os
 
 app = Flask(__name__)
-CORS(app)
 
-# Clave API de OpenAI
-API_KEY = "OPENAI_API_KEY"   # Reemplaza con tu clave API real
-API_URL = "https://api.openai.com/v1/assistants"
+# Configuración de la API Key de OpenAI
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-headers = {
-    "Authorization": f"Bearer {API_KEY}",
-    "Content-Type": "application/json"
-}
+# ID del asistente con el que se interactúa
+default_assistant_id = "asst_Do2g0wbk6u2bo8b2bnYMJjgw"
 
-@app.route("/", methods=["GET"])
-def home():
-    return "¡Bienvenido al backend para Cumlaude!", 200
-
-@app.route("/ask", methods=["POST"])
-def ask_cumlaude():
-    try:
-        # Obtener el mensaje del usuario
-        data = request.get_json()
-        user_message = data.get("prompt", "").strip()
-
-        if not user_message:
-            return jsonify({"error": "El campo 'prompt' no puede estar vacío."}), 400
-
-        # Crear un hilo para Cumlaude
-        assistant_id = "asst_YvXWL3CSeZFLrIa9PrqLNBD2"  # ID de tu asistente Cumlaude
-        thread_response = requests.post(
-            f"{API_URL}/{assistant_id}/threads",
-            headers=headers,
-            json={"messages": [{"role": "user", "content": user_message}]}
+# Endpoint para gestionar Threads
+@app.route('/threads', methods=['POST', 'GET', 'DELETE'])
+def manage_threads():
+    if request.method == 'POST':
+        data = request.json
+        thread = openai.Assistant.create_thread(
+            assistant_id=default_assistant_id,
+            name=data.get('name', 'Default Thread')
         )
+        return jsonify(thread), 201
 
-        if thread_response.status_code != 200:
-            return jsonify({"error": "Error al crear el hilo con OpenAI"}), 500
+    elif request.method == 'GET':
+        threads = openai.Assistant.list_threads(assistant_id=default_assistant_id)
+        return jsonify(threads), 200
 
-        thread_data = thread_response.json()
-        thread_id = thread_data["id"]
+    elif request.method == 'DELETE':
+        thread_id = request.args.get('id')
+        if not thread_id:
+            return jsonify({"error": "Thread ID is required"}), 400
+        openai.Assistant.delete_thread(assistant_id=default_assistant_id, thread_id=thread_id)
+        return jsonify({"message": "Thread deleted"}), 200
 
-        # Ejecutar el asistente en el hilo creado
-        run_response = requests.post(
-            f"{API_URL}/{assistant_id}/threads/{thread_id}/runs",
-            headers=headers
+# Endpoint para gestionar Messages
+@app.route('/messages', methods=['POST', 'GET', 'DELETE'])
+def manage_messages():
+    if request.method == 'POST':
+        data = request.json
+        message = openai.Assistant.create_message(
+            assistant_id=default_assistant_id,
+            thread_id=data['thread_id'],
+            content=data['content']
         )
+        return jsonify(message), 201
 
-        if run_response.status_code != 200:
-            return jsonify({"error": "Error al ejecutar el asistente"}), 500
+    elif request.method == 'GET':
+        thread_id = request.args.get('thread_id')
+        if not thread_id:
+            return jsonify({"error": "Thread ID is required"}), 400
+        messages = openai.Assistant.list_messages(assistant_id=default_assistant_id, thread_id=thread_id)
+        return jsonify(messages), 200
 
-        run_data = run_response.json()
-        latest_message = run_data["latest_message"]["content"]
+    elif request.method == 'DELETE':
+        message_id = request.args.get('id')
+        if not message_id:
+            return jsonify({"error": "Message ID is required"}), 400
+        openai.Assistant.delete_message(assistant_id=default_assistant_id, message_id=message_id)
+        return jsonify({"message": "Message deleted"}), 200
 
-        return jsonify({"response": latest_message})
+# Endpoint para gestionar Runs
+@app.route('/runs', methods=['POST', 'GET', 'DELETE'])
+def manage_runs():
+    if request.method == 'POST':
+        data = request.json
+        run = openai.Assistant.create_run(
+            assistant_id=default_assistant_id,
+            thread_id=data['thread_id'],
+            message_id=data.get('message_id'),
+            parameters=data.get('parameters', {})
+        )
+        return jsonify(run), 201
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    elif request.method == 'GET':
+        thread_id = request.args.get('thread_id')
+        if not thread_id:
+            return jsonify({"error": "Thread ID is required"}), 400
+        runs = openai.Assistant.list_runs(assistant_id=default_assistant_id, thread_id=thread_id)
+        return jsonify(runs), 200
 
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    elif request.method == 'DELETE':
+        run_id = request.args.get('id')
+        if not run_id:
+            return jsonify({"error": "Run ID is required"}), 400
+        openai.Assistant.delete_run(assistant_id=default_assistant_id, run_id=run_id)
+        return jsonify({"message": "Run deleted"}), 200
+
+# Run the Flask app
+if __name__ == '__main__':
+    app.run(debug=True)
