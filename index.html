@@ -1,90 +1,141 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cumlaude Assistant</title>
+    <title>Asistente Cumlaude</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
         }
         .container {
             max-width: 600px;
-            margin: auto;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .message {
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+        .chat-box {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
             padding: 10px;
-            margin: 5px 0;
             border-radius: 5px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
         }
-        .user {
-            background-color: #d1e7dd;
+        .chat-box .message {
+            margin: 10px 0;
+        }
+        .chat-box .message.user {
             text-align: right;
+            color: #0056b3;
         }
-        .bot {
-            background-color: #f8d7da;
+        .chat-box .message.assistant {
             text-align: left;
+            color: #333;
         }
-        input, button {
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+        .input-area input {
+            flex: 1;
             padding: 10px;
             font-size: 16px;
-            margin-top: 10px;
-            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .input-area button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            background-color: #0056b3;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .input-area button:hover {
+            background-color: #004499;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Asistente Cumlaude</h1>
-        <div id="chat">
-            <!-- Chat messages will be appended here -->
+        <div class="header">
+            <h1>Asistente Cumlaude</h1>
         </div>
-        <input type="text" id="user-input" placeholder="Escribe tu pregunta..." />
-        <button onclick="sendMessage()">Enviar</button>
+        <div class="chat-box" id="chat-box">
+            <!-- Mensajes del chat -->
+        </div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Escribe tu pregunta aquí...">
+            <button id="send-button">Enviar</button>
+        </div>
     </div>
+
     <script>
+        const chatBox = document.getElementById("chat-box");
+        const userInput = document.getElementById("user-input");
+        const sendButton = document.getElementById("send-button");
+
+        function addMessage(sender, message) {
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message", sender);
+            messageDiv.textContent = message;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll automático al final
+        }
+
         async function sendMessage() {
-            const userInput = document.getElementById('user-input').value;
-            if (!userInput.trim()) {
-                alert("Por favor, escribe una pregunta.");
-                return;
-            }
+            const userMessage = userInput.value.trim();
+            if (!userMessage) return;
 
-            // Mostrar el mensaje del usuario
-            appendMessage(userInput, 'user');
+            addMessage("user", userMessage);
+            userInput.value = "";
 
-            // Enviar al backend
             try {
-                const response = await fetch("https://whatsappgpt-l8n6.onrender.com/ask", {
+                const response = await fetch("https://cl-assitant.onrender.com/ask", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ prompt: userInput }),
+                    body: JSON.stringify({
+                        prompt: userMessage,
+                        brand: "Cumlaude"
+                    }),
                 });
 
                 const data = await response.json();
                 if (data.response) {
-                    appendMessage(data.response, 'bot');
+                    addMessage("assistant", data.response);
                 } else {
-                    appendMessage("Hubo un error al procesar tu solicitud.", 'bot');
+                    addMessage("assistant", "Hubo un error al procesar tu solicitud.");
                 }
             } catch (error) {
-                appendMessage("Error al conectar con el servidor.", 'bot');
+                addMessage("assistant", "Error al conectar con el servidor.");
             }
-
-            document.getElementById('user-input').value = ''; // Limpiar el campo de entrada
         }
 
-        function appendMessage(message, sender) {
-            const chat = document.getElementById('chat');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
-            messageDiv.textContent = message;
-            chat.appendChild(messageDiv);
-            chat.scrollTop = chat.scrollHeight; // Scroll automático al final
-        }
+        sendButton.addEventListener("click", sendMessage);
+        userInput.addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
     </script>
 </body>
 </html>
