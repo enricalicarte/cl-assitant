@@ -143,6 +143,11 @@ def link_vector_store(assistant_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Endpoint para verificar si la API está activa
+@app.route('/')
+def home():
+    return jsonify({"message": "API is running"}), 200
+
 # Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True)
