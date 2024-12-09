@@ -85,6 +85,40 @@ def manage_runs():
         openai.Assistant.delete_run(assistant_id=default_assistant_id, run_id=run_id)
         return jsonify({"message": "Run deleted"}), 200
 
+# Endpoint para subir archivos
+@app.route('/files', methods=['POST'])
+def upload_file():
+    try:
+        file = request.files['file']
+        response = openai.File.create(file=file, purpose='assistants')
+        return jsonify(response), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Endpoint para crear un vector store
+@app.route('/vector_stores', methods=['POST'])
+def create_vector_store():
+    try:
+        data = request.json
+        response = openai.VectorStore.create(file_ids=data['file_ids'])
+        return jsonify(response), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Endpoint para vincular un vector store al asistente
+@app.route('/assistants/<assistant_id>/tools', methods=['POST'])
+def link_vector_store(assistant_id):
+    try:
+        data = request.json
+        response = openai.Assistant.update(
+            assistant_id=assistant_id,
+            tools=[{"type": "file_search"}],
+            tool_resources={"file_search": {"vector_store_ids": data['vector_store_ids']}}
+        )
+        return jsonify(response), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True)
