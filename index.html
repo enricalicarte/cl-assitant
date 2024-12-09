@@ -7,135 +7,104 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
+            margin: 20px;
         }
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            color: #333;
-        }
-        .chat-box {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
+        #chat {
+            border: 1px solid #ccc;
             padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            background: #f9f9f9;
+            max-width: 600px;
+            margin: auto;
+            overflow-y: auto;
+            height: 300px;
         }
-        .chat-box .message {
-            margin: 10px 0;
+        .message {
+            margin: 5px 0;
         }
-        .chat-box .message.user {
+        .user {
             text-align: right;
-            color: #0056b3;
+            color: blue;
         }
-        .chat-box .message.assistant {
+        .assistant {
             text-align: left;
-            color: #333;
+            color: green;
         }
-        .input-area {
+        #input-container {
+            max-width: 600px;
+            margin: auto;
             display: flex;
-            gap: 10px;
+            margin-top: 10px;
         }
-        .input-area input {
+        #input-container input {
             flex: 1;
             padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
         }
-        .input-area button {
-            padding: 10px 15px;
-            font-size: 16px;
-            border: none;
-            background-color: #0056b3;
-            color: #fff;
-            border-radius: 5px;
+        #input-container button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-left: none;
+            border-radius: 0 5px 5px 0;
+            background-color: blue;
+            color: white;
             cursor: pointer;
-        }
-        .input-area button:hover {
-            background-color: #004499;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Asistente Cumlaude</h1>
-        </div>
-        <div class="chat-box" id="chat-box">
-            <!-- Mensajes del chat -->
-        </div>
-        <div class="input-area">
-            <input type="text" id="user-input" placeholder="Escribe tu pregunta aquí...">
-            <button id="send-button">Enviar</button>
-        </div>
+    <h1>Asistente Cumlaude</h1>
+    <div id="chat"></div>
+    <div id="input-container">
+        <input type="text" id="user-input" placeholder="Escribe tu pregunta...">
+        <button onclick="sendMessage()">Enviar</button>
     </div>
 
     <script>
-        const chatBox = document.getElementById("chat-box");
+        const chat = document.getElementById("chat");
         const userInput = document.getElementById("user-input");
-        const sendButton = document.getElementById("send-button");
-
-        function addMessage(sender, message) {
-            const messageDiv = document.createElement("div");
-            messageDiv.classList.add("message", sender);
-            messageDiv.textContent = message;
-            chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight; // Scroll automático al final
-        }
 
         async function sendMessage() {
-            const userMessage = userInput.value.trim();
-            if (!userMessage) return;
+            const message = userInput.value.trim();
+            if (!message) return;
 
-            addMessage("user", userMessage);
-            userInput.value = "";
+            // Muestra el mensaje del usuario en el chat
+            const userMessage = document.createElement("div");
+            userMessage.className = "message user";
+            userMessage.textContent = message;
+            chat.appendChild(userMessage);
 
+            // Llamada al backend
             try {
                 const response = await fetch("https://cl-assitant.onrender.com/ask", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        prompt: userMessage,
+                        prompt: message,
                         brand: "Cumlaude"
-                    }),
+                    })
                 });
 
                 const data = await response.json();
+                const assistantMessage = document.createElement("div");
+                assistantMessage.className = "message assistant";
                 if (data.response) {
-                    addMessage("assistant", data.response);
+                    assistantMessage.textContent = data.response;
                 } else {
-                    addMessage("assistant", "Hubo un error al procesar tu solicitud.");
+                    assistantMessage.textContent = "Error al obtener respuesta del asistente.";
                 }
+                chat.appendChild(assistantMessage);
             } catch (error) {
-                addMessage("assistant", "Error al conectar con el servidor.");
+                const errorMessage = document.createElement("div");
+                errorMessage.className = "message assistant";
+                errorMessage.textContent = "Error al conectar con el servidor.";
+                chat.appendChild(errorMessage);
             }
-        }
 
-        sendButton.addEventListener("click", sendMessage);
-        userInput.addEventListener("keypress", (event) => {
-            if (event.key === "Enter") {
-                sendMessage();
-            }
-        });
+            // Limpia el input
+            userInput.value = "";
+        }
     </script>
 </body>
 </html>
