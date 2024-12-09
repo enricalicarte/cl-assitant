@@ -1,11 +1,17 @@
 from flask import Flask, request, jsonify
-import openai
+import requests
 import os
 
 app = Flask(__name__)
 
 # Configuración de la API Key de OpenAI
-openai.api_key = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+HEADERS = {
+    "Authorization": f"Bearer {OPENAI_API_KEY}",
+    "Content-Type": "application/json",
+    "OpenAI-Beta": "assistants=v2"
+}
+BASE_URL = "https://api.openai.com/v1"
 
 # ID del asistente con el que se interactúa
 default_assistant_id = "asst_Do2g0wbk6u2bo8b2bnYMJjgw"
@@ -13,85 +19,102 @@ default_assistant_id = "asst_Do2g0wbk6u2bo8b2bnYMJjgw"
 # Endpoint para gestionar Threads
 @app.route('/threads', methods=['POST', 'GET', 'DELETE'])
 def manage_threads():
-    if request.method == 'POST':
-        data = request.json
-        thread = openai.Assistant.create_thread(
-            assistant_id=default_assistant_id,
-            name=data.get('name', 'Default Thread')
-        )
-        return jsonify(thread), 201
+    try:
+        if request.method == 'POST':
+            data = request.json
+            payload = {
+                "assistant_id": default_assistant_id,
+                "name": data.get('name', 'Default Thread')
+            }
+            response = requests.post(f"{BASE_URL}/threads", headers=HEADERS, json=payload)
+            return jsonify(response.json()), response.status_code
 
-    elif request.method == 'GET':
-        threads = openai.Assistant.list_threads(assistant_id=default_assistant_id)
-        return jsonify(threads), 200
+        elif request.method == 'GET':
+            response = requests.get(f"{BASE_URL}/threads", headers=HEADERS, params={"assistant_id": default_assistant_id})
+            return jsonify(response.json()), response.status_code
 
-    elif request.method == 'DELETE':
-        thread_id = request.args.get('id')
-        if not thread_id:
-            return jsonify({"error": "Thread ID is required"}), 400
-        openai.Assistant.delete_thread(assistant_id=default_assistant_id, thread_id=thread_id)
-        return jsonify({"message": "Thread deleted"}), 200
+        elif request.method == 'DELETE':
+            thread_id = request.args.get('id')
+            if not thread_id:
+                return jsonify({"error": "Thread ID is required"}), 400
+            response = requests.delete(f"{BASE_URL}/threads/{thread_id}", headers=HEADERS, params={"assistant_id": default_assistant_id})
+            return jsonify(response.json()), response.status_code
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Endpoint para gestionar Messages
 @app.route('/messages', methods=['POST', 'GET', 'DELETE'])
 def manage_messages():
-    if request.method == 'POST':
-        data = request.json
-        message = openai.Assistant.create_message(
-            assistant_id=default_assistant_id,
-            thread_id=data['thread_id'],
-            content=data['content']
-        )
-        return jsonify(message), 201
+    try:
+        if request.method == 'POST':
+            data = request.json
+            payload = {
+                "assistant_id": default_assistant_id,
+                "thread_id": data['thread_id'],
+                "content": data['content']
+            }
+            response = requests.post(f"{BASE_URL}/messages", headers=HEADERS, json=payload)
+            return jsonify(response.json()), response.status_code
 
-    elif request.method == 'GET':
-        thread_id = request.args.get('thread_id')
-        if not thread_id:
-            return jsonify({"error": "Thread ID is required"}), 400
-        messages = openai.Assistant.list_messages(assistant_id=default_assistant_id, thread_id=thread_id)
-        return jsonify(messages), 200
+        elif request.method == 'GET':
+            thread_id = request.args.get('thread_id')
+            if not thread_id:
+                return jsonify({"error": "Thread ID is required"}), 400
+            response = requests.get(f"{BASE_URL}/messages", headers=HEADERS, params={"assistant_id": default_assistant_id, "thread_id": thread_id})
+            return jsonify(response.json()), response.status_code
 
-    elif request.method == 'DELETE':
-        message_id = request.args.get('id')
-        if not message_id:
-            return jsonify({"error": "Message ID is required"}), 400
-        openai.Assistant.delete_message(assistant_id=default_assistant_id, message_id=message_id)
-        return jsonify({"message": "Message deleted"}), 200
+        elif request.method == 'DELETE':
+            message_id = request.args.get('id')
+            if not message_id:
+                return jsonify({"error": "Message ID is required"}), 400
+            response = requests.delete(f"{BASE_URL}/messages/{message_id}", headers=HEADERS, params={"assistant_id": default_assistant_id})
+            return jsonify(response.json()), response.status_code
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Endpoint para gestionar Runs
 @app.route('/runs', methods=['POST', 'GET', 'DELETE'])
 def manage_runs():
-    if request.method == 'POST':
-        data = request.json
-        run = openai.Assistant.create_run(
-            assistant_id=default_assistant_id,
-            thread_id=data['thread_id'],
-            message_id=data.get('message_id'),
-            parameters=data.get('parameters', {})
-        )
-        return jsonify(run), 201
+    try:
+        if request.method == 'POST':
+            data = request.json
+            payload = {
+                "assistant_id": default_assistant_id,
+                "thread_id": data['thread_id'],
+                "message_id": data.get('message_id'),
+                "parameters": data.get('parameters', {})
+            }
+            response = requests.post(f"{BASE_URL}/runs", headers=HEADERS, json=payload)
+            return jsonify(response.json()), response.status_code
 
-    elif request.method == 'GET':
-        thread_id = request.args.get('thread_id')
-        if not thread_id:
-            return jsonify({"error": "Thread ID is required"}), 400
-        runs = openai.Assistant.list_runs(assistant_id=default_assistant_id, thread_id=thread_id)
-        return jsonify(runs), 200
+        elif request.method == 'GET':
+            thread_id = request.args.get('thread_id')
+            if not thread_id:
+                return jsonify({"error": "Thread ID is required"}), 400
+            response = requests.get(f"{BASE_URL}/runs", headers=HEADERS, params={"assistant_id": default_assistant_id, "thread_id": thread_id})
+            return jsonify(response.json()), response.status_code
 
-    elif request.method == 'DELETE':
-        run_id = request.args.get('id')
-        if not run_id:
-            return jsonify({"error": "Run ID is required"}), 400
-        openai.Assistant.delete_run(assistant_id=default_assistant_id, run_id=run_id)
-        return jsonify({"message": "Run deleted"}), 200
+        elif request.method == 'DELETE':
+            run_id = request.args.get('id')
+            if not run_id:
+                return jsonify({"error": "Run ID is required"}), 400
+            response = requests.delete(f"{BASE_URL}/runs/{run_id}", headers=HEADERS, params={"assistant_id": default_assistant_id})
+            return jsonify(response.json()), response.status_code
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Endpoint para subir archivos
 @app.route('/files', methods=['POST'])
 def upload_file():
     try:
         file = request.files['file']
-        response = openai.File.create(file=file, purpose='assistants')
-        return jsonify(response), 201
+        files = {"file": (file.filename, file.stream, file.mimetype)}
+        data = {"purpose": "assistants"}
+        response = requests.post(f"{BASE_URL}/files", headers={"Authorization": HEADERS["Authorization"]}, files=files, data=data)
+        return jsonify(response.json()), response.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -100,8 +123,9 @@ def upload_file():
 def create_vector_store():
     try:
         data = request.json
-        response = openai.VectorStore.create(file_ids=data['file_ids'])
-        return jsonify(response), 201
+        payload = {"file_ids": data['file_ids']}
+        response = requests.post(f"{BASE_URL}/vector_stores", headers=HEADERS, json=payload)
+        return jsonify(response.json()), response.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -110,12 +134,12 @@ def create_vector_store():
 def link_vector_store(assistant_id):
     try:
         data = request.json
-        response = openai.Assistant.update(
-            assistant_id=assistant_id,
-            tools=[{"type": "file_search"}],
-            tool_resources={"file_search": {"vector_store_ids": data['vector_store_ids']}}
-        )
-        return jsonify(response), 200
+        payload = {
+            "tools": [{"type": "file_search"}],
+            "tool_resources": {"file_search": {"vector_store_ids": data['vector_store_ids']}}
+        }
+        response = requests.patch(f"{BASE_URL}/assistants/{assistant_id}", headers=HEADERS, json=payload)
+        return jsonify(response.json()), response.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
