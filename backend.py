@@ -18,30 +18,12 @@ BASE_URL = "https://api.openai.com/v1"
 # ID del asistente con el que se interactúa
 default_assistant_id = "asst_Do2g0wbk6u2bo8b2bnYMJjgw"
 
-# Endpoint para gestionar Threads
-@app.route('/threads', methods=['POST', 'GET', 'DELETE'])
-def manage_threads():
+# Endpoint para gestionar Threads eliminado por incompatibilidad
+@app.route('/assistants/<assistant_id>/messages', methods=['GET'])
+def list_messages(assistant_id):
     try:
-        if request.method == 'POST':
-            data = request.json
-            payload = {
-                "assistant_id": default_assistant_id,
-                "name": data.get('name', 'Default Thread')
-            }
-            response = requests.post(f"{BASE_URL}/threads", headers=HEADERS, json=payload)
-            return jsonify(response.json()), response.status_code
-
-        elif request.method == 'GET':
-            response = requests.get(f"{BASE_URL}/threads", headers=HEADERS, params={"assistant_id": default_assistant_id})
-            return jsonify(response.json()), response.status_code
-
-        elif request.method == 'DELETE':
-            thread_id = request.args.get('id')
-            if not thread_id:
-                return jsonify({"error": "Thread ID is required"}), 400
-            response = requests.delete(f"{BASE_URL}/threads/{thread_id}", headers=HEADERS, params={"assistant_id": default_assistant_id})
-            return jsonify(response.json()), response.status_code
-
+        response = requests.get(f"{BASE_URL}/messages", headers=HEADERS, params={"assistant_id": assistant_id})
+        return jsonify(response.json()), response.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
