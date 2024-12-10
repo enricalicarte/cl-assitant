@@ -163,7 +163,7 @@
         const data = await response.json();
         addMessage(data.reply || "Respuesta no disponible", "bot");
       } catch (error) {
-        addMessage("Error al conectar con el servidor.", "bot");
+        console.error("Error al conectar con el servidor:", error);
       }
     }
   </script>
