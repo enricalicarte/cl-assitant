@@ -161,9 +161,13 @@
         });
 
         const data = await response.json();
-        addMessage(data.output || "Respuesta no disponible", "bot");
+
+        // Extract the "output" field from the response
+        const botResponse = data[0]?.json?.output || "Respuesta no disponible";
+        addMessage(botResponse, "bot");
       } catch (error) {
         console.error("Error al conectar con el servidor:", error);
+        addMessage("Error al conectar con el servidor.", "bot");
       }
     }
   </script>
