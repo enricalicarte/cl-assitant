@@ -161,7 +161,7 @@
         });
 
         const data = await response.json();
-        addMessage(data.reply || "Respuesta no disponible", "bot");
+        addMessage(data.output || "Respuesta no disponible", "bot");
       } catch (error) {
         console.error("Error al conectar con el servidor:", error);
       }
