@@ -48,6 +48,7 @@
       background-color: #ececec; /* Fondo claro para contraste */
       padding: 10px;
       border-radius: 5px;
+      word-wrap: break-word;
     }
     .chat-message.user {
       text-align: right;
@@ -55,6 +56,7 @@
       background-color: #4e54c8; /* Fondo oscuro para contraste */
       padding: 10px;
       border-radius: 5px;
+      word-wrap: break-word;
     }
     .chat-input {
       display: flex;
@@ -73,6 +75,10 @@
       padding: 0 15px;
       cursor: pointer;
     }
+    a {
+      color: #4e54c8;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -90,9 +96,19 @@
     function addMessage(content, sender) {
       const messageDiv = document.createElement("div");
       messageDiv.className = `chat-message ${sender}`;
-      messageDiv.textContent = content;
+      if (sender === "bot") {
+        messageDiv.innerHTML = parseMessage(content);
+      } else {
+        messageDiv.textContent = content;
+      }
       chatWindow.appendChild(messageDiv);
       chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function parseMessage(content) {
+      // Convierte enlaces en texto clicable
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      return content.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
     }
 
     async function sendMessage() {
