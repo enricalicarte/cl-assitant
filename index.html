@@ -160,10 +160,15 @@
           }),
         });
 
-        const data = await response.json();
+        let data;
+        try {
+          data = await response.json();
+        } catch (e) {
+          // If response is not JSON, fallback to text
+          data = { output: await response.text() };
+        }
 
-        // Extract the "output" field from the response
-        const botResponse = data[0]?.json?.output || "Respuesta no disponible";
+        const botResponse = data.output || "Respuesta no disponible";
         addMessage(botResponse, "bot");
       } catch (error) {
         console.error("Error al conectar con el servidor:", error);
