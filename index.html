@@ -181,6 +181,19 @@
         const searchInput = document.getElementById("search-input");
         const searchButton = document.getElementById("search-button");
 
+        let currentBrand = brandSelector.value;
+
+        brandSelector.addEventListener("change", () => {
+            const selectedBrand = brandSelector.value;
+
+            if (currentBrand !== selectedBrand) {
+                currentBrand = selectedBrand;
+                chatHistory.innerHTML = ""; // Limpia el historial de mensajes
+                console.clear(); // Limpia la consola
+                console.log(`Cambio de marca a: ${selectedBrand}. Chat reiniciado.`);
+            }
+        });
+
         function addMessage(content, sender) {
             const messageDiv = document.createElement("div");
             messageDiv.className = `chat-message ${sender}`;
