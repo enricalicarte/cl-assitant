@@ -52,6 +52,17 @@
         .conversation-list.hidden {
             display: none;
         }
+        .conversation-item {
+            cursor: pointer;
+            margin: 5px 0;
+            padding: 5px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .conversation-item:hover {
+            background: #e0e0e0;
+        }
         #main-content {
             flex: 1;
             display: flex;
@@ -84,7 +95,7 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        #search-button, #new-conversation-button, #clear-chat-button {
+        #search-button, #clear-chat-button {
             background: #001c50;
             color: white;
             border: none;
@@ -143,15 +154,24 @@
                 <ul id="brand-list">
                     <li>
                         <div class="brand-header" data-brand="Cumlaude">Cumlaude</div>
-                        <ul class="conversation-list hidden" id="Cumlaude-list"></ul>
+                        <ul class="conversation-list hidden" id="Cumlaude-list">
+                            <li class="conversation-item">Conversación 1</li>
+                            <li class="conversation-item">Conversación 2</li>
+                        </ul>
                     </li>
                     <li>
                         <div class="brand-header" data-brand="Rilastil">Rilastil</div>
-                        <ul class="conversation-list hidden" id="Rilastil-list"></ul>
+                        <ul class="conversation-list hidden" id="Rilastil-list">
+                            <li class="conversation-item">Conversación 1</li>
+                            <li class="conversation-item">Conversación 2</li>
+                        </ul>
                     </li>
                     <li>
                         <div class="brand-header" data-brand="Sensilis">Sensilis</div>
-                        <ul class="conversation-list hidden" id="Sensilis-list"></ul>
+                        <ul class="conversation-list hidden" id="Sensilis-list">
+                            <li class="conversation-item">Conversación 1</li>
+                            <li class="conversation-item">Conversación 2</li>
+                        </ul>
                     </li>
                 </ul>
             </nav>
@@ -176,11 +196,21 @@
     <script>
         const chatHistory = document.getElementById("chat-history");
         const brandSelector = document.getElementById("brand-selector");
+        const brandHeaders = document.querySelectorAll(".brand-header");
         const searchInput = document.getElementById("search-input");
         const searchButton = document.getElementById("search-button");
         const clearChatButton = document.getElementById("clear-chat-button");
 
         let currentBrand = brandSelector.value;
+
+        // Mostrar/ocultar listas de conversaciones
+        brandHeaders.forEach(header => {
+            header.addEventListener("click", () => {
+                const brand = header.dataset.brand;
+                const list = document.getElementById(`${brand}-list`);
+                list.classList.toggle("hidden");
+            });
+        });
 
         brandSelector.addEventListener("change", () => {
             const selectedBrand = brandSelector.value;
