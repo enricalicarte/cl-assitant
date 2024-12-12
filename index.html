@@ -84,7 +84,7 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        #search-button, #new-conversation-button {
+        #search-button, #new-conversation-button, #clear-chat-button {
             background: #001c50;
             color: white;
             border: none;
@@ -107,25 +107,23 @@
             align-items: flex-start;
             max-width: 70%;
         }
-   
-.chat-message.bot {
-    text-align: left;
-    color: #ffffff;
-    background-color: #799bb9; /* Azul claro neutro */
-    padding: 10px;
-    border-radius: 8px 8px 8px 0;
-    margin-right: auto;
-    border: 1px solid #b3e5fc;
-}
-
-.chat-message.user {
-    text-align: right;
-    color: #ffffff;
-    background-color: #9abbd8; /* Azul corporativo */
-    padding: 10px;
-    border-radius: 8px 8px 0 8px;
-    margin-left: auto;
-}
+        .chat-message.bot {
+            text-align: left;
+            color: #ffffff;
+            background-color: #799bb9;
+            padding: 10px;
+            border-radius: 8px 8px 8px 0;
+            margin-right: auto;
+            border: 1px solid #b3e5fc;
+        }
+        .chat-message.user {
+            text-align: right;
+            color: #ffffff;
+            background-color: #9abbd8;
+            padding: 10px;
+            border-radius: 8px 8px 0 8px;
+            margin-left: auto;
+        }
         a {
             color: #128c7e;
             text-decoration: none;
@@ -169,6 +167,7 @@
                 <input type="text" id="search-input" placeholder="Escribe tu mensaje aquí..." />
                 <button id="search-button">➔</button>
                 <button id="new-conversation-button">🔄</button>
+                <button id="clear-chat-button">🗑️ Limpiar chat</button>
             </div>
             <div id="chat-history">
                 <!-- Historial de chat actual -->
@@ -180,6 +179,7 @@
         const brandSelector = document.getElementById("brand-selector");
         const searchInput = document.getElementById("search-input");
         const searchButton = document.getElementById("search-button");
+        const clearChatButton = document.getElementById("clear-chat-button");
 
         let currentBrand = brandSelector.value;
 
@@ -192,6 +192,12 @@
                 console.clear(); // Limpia la consola
                 console.log(`Cambio de marca a: ${selectedBrand}. Chat reiniciado.`);
             }
+        });
+
+        clearChatButton.addEventListener("click", () => {
+            chatHistory.innerHTML = ""; // Limpia el historial de mensajes
+            console.clear(); // Limpia la consola
+            console.log("Historial de chat limpiado.");
         });
 
         function addMessage(content, sender) {
