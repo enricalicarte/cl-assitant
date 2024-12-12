@@ -136,11 +136,11 @@
         .chat-message.bot {
             text-align: left;
             color: #ffffff;
-            background-color: #799bb9;
+            background-color: #c3d9f1;
             padding: 10px;
             border-radius: 8px 8px 8px 0;
             margin-right: auto;
-            border: 1px solid #b3e5fc;
+            border: 1px solid #a3c5e8;
         }
         .chat-message.user {
             text-align: right;
@@ -151,8 +151,15 @@
             margin-left: auto;
         }
         a {
-            color: #128c7e;
-            text-decoration: none;
+            color: #2c6fbb;
+            text-decoration: underline;
+            background-color: rgba(240, 240, 255, 0.9);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        a:hover {
+            color: #1a4f8b;
+            background-color: rgba(220, 220, 255, 0.9);
         }
         .italic {
             font-style: italic;
@@ -266,39 +273,3 @@
                     botMessage = await response.text();
                 }
 
-                // Procesar enlaces y mostrar respuesta
-                botMessage = processLinks(botMessage);
-                addMessage(botMessage, "bot");
-            } catch (error) {
-                console.error("Error al conectar con el servidor:", error);
-                addMessage("Error al conectar con el servidor.", "bot");
-            }
-        }
-
-        // Añadir mensaje al historial
-        function addMessage(content, sender) {
-            const messageDiv = document.createElement("div");
-            messageDiv.className = `chat-message ${sender}`;
-            messageDiv.innerHTML = content;
-            chatHistory.appendChild(messageDiv);
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-        }
-
-        // Procesar enlaces en el mensaje
-        function processLinks(message) {
-            const urlRegex = /(https?:\/\/[^\s]+)/g;
-            return message.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
-        }
-
-        // Manejar evento de tecla Enter
-        searchInput.addEventListener("keypress", (event) => {
-            if (event.key === "Enter") {
-                sendMessage();
-            }
-        });
-
-        // Manejar clic en botón Enviar
-        searchButton.addEventListener("click", sendMessage);
-    </script>
-</body>
-</html>
