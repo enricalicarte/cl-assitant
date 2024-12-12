@@ -213,8 +213,6 @@
         const searchButton = document.getElementById("search-button");
         const clearChatButton = document.getElementById("clear-chat-button");
 
-        let brandConversations = {}; // Almacena los historiales por marca
-
         // Mostrar/ocultar listas de conversaciones
         brandHeaders.forEach(header => {
             header.addEventListener("click", () => {
@@ -226,9 +224,7 @@
 
         // Cambiar de marca
         brandSelector.addEventListener("change", () => {
-            const selectedBrand = brandSelector.value;
-            brandConversations[selectedBrand] = chatHistory.innerHTML;
-            chatHistory.innerHTML = brandConversations[selectedBrand] || "";
+            chatHistory.innerHTML = "";
         });
 
         // Enviar mensaje
@@ -272,19 +268,17 @@
             }
         }
 
-    // Añadir mensaje al historial
-function addMessage(content, sender) {
-    const messageDiv = document.createElement("div");
-    messageDiv.className = `chat-message ${sender}`;
-    messageDiv.innerHTML = content; // Usa innerHTML para conservar el formato
-    chatHistory.appendChild(messageDiv);
-    chatHistory.scrollTop = chatHistory.scrollHeight;
-}
+        // Añadir mensaje al historial
+        function addMessage(content, sender) {
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `chat-message ${sender}`;
+            messageDiv.innerHTML = content; // Cambiado a innerHTML para mantener el formato
+            chatHistory.appendChild(messageDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
 
         // Limpiar chat
         clearChatButton.addEventListener("click", () => {
-            const selectedBrand = brandSelector.value;
-            brandConversations[selectedBrand] = "";
             chatHistory.innerHTML = "";
         });
 
