@@ -272,14 +272,14 @@
             }
         }
 
-        // Añadir mensaje al historial
-        function addMessage(content, sender) {
-            const messageDiv = document.createElement("div");
-            messageDiv.className = `chat-message ${sender}`;
-            messageDiv.textContent = content;
-            chatHistory.appendChild(messageDiv);
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-        }
+    // Añadir mensaje al historial
+function addMessage(content, sender) {
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `chat-message ${sender}`;
+    messageDiv.innerHTML = content; // Usa innerHTML para conservar el formato
+    chatHistory.appendChild(messageDiv);
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+}
 
         // Limpiar chat
         clearChatButton.addEventListener("click", () => {
