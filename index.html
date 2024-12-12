@@ -115,32 +115,46 @@
             flex: 1;
             overflow-y: auto;
             background: #ffffff;
-            padding: 10px;
-            border-radius: 4px;
+            padding: 15px;
+            border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            line-height: 1.5;
+            max-height: 80%;
         }
         .chat-message {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             display: flex;
             align-items: flex-start;
-            max-width: 70%;
+            max-width: 75%;
         }
         .chat-message.bot {
             text-align: left;
-            color: #000000;
-            background-color: #eeeeee;
-            padding: 10px;
-            border-radius: 8px 8px 8px 0;
+            background-color: #f9f9f9;
+            padding: 12px;
+            border-radius: 10px 10px 10px 0;
             margin-right: auto;
-            border: 1px solid #a3c5e8;
+            border: 1px solid #cccccc;
+            word-wrap: break-word;
+            white-space: pre-wrap;
         }
         .chat-message.user {
             text-align: right;
-            color: #000000;
-            background-color: #c3d9f1;
-            padding: 10px;
-            border-radius: 8px 8px 0 8px;
+            background-color: #d1ecf1;
+            padding: 12px;
+            border-radius: 10px 10px 0 10px;
             margin-left: auto;
+            border: 1px solid #17a2b8;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        .chat-message a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .chat-message a:hover {
+            text-decoration: underline;
+            color: #0056b3;
         }
         @media (max-width: 768px) {
             #sidebar {
@@ -256,7 +270,7 @@
 
                 if (contentType && contentType.includes("application/json")) {
                     const data = await response.json();
-                    botMessage = data.output || "Sin respuesta del servidor.";
+                    botMessage = formatMessageToHTML(data.output || "Sin respuesta del servidor.");
                 } else {
                     botMessage = await response.text();
                 }
@@ -268,13 +282,27 @@
             }
         }
 
-        // Añadir mensaje al historial
+        // Añadir mensaje al historial con formato HTML
         function addMessage(content, sender) {
             const messageDiv = document.createElement("div");
             messageDiv.className = `chat-message ${sender}`;
-            messageDiv.innerHTML = content; // Cambiado a innerHTML para mantener el formato
+            
+            if (sender === "bot") {
+                messageDiv.innerHTML = content; // Renderiza HTML
+            } else {
+                messageDiv.textContent = content; // Texto plano para el usuario
+            }
+
             chatHistory.appendChild(messageDiv);
             chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        // Formatear texto con marcas a HTML
+        function formatMessageToHTML(content) {
+            return content
+                .replace(/\n/g, "<br>")
+                .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+                .replace(/\[(.*?)\]\((.*?)\)/g, "<a href='$2'>$1</a>");
         }
 
         // Limpiar chat
