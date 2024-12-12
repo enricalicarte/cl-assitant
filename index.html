@@ -4,133 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot Vinculado a Marcas</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #e5ddd5;
-            color: #333;
-            display: flex;
-            height: 100vh;
-            margin: 0;
-        }
-        #container {
-            display: flex;
-            width: 100%;
-        }
-        #menu-toggle {
-            background: #25d366;
-            color: white;
-            border: none;
-            padding: 10px;
-            font-size: 20px;
-            cursor: pointer;
-        }
-        #sidebar {
-            background: #ffffff;
-            color: #333;
-            width: 250px;
-            display: flex;
-            flex-direction: column;
-            padding: 15px;
-            border-right: 1px solid #ddd;
-        }
-        #sidebar h2 {
-            font-size: 20px;
-            margin-bottom: 15px;
-            color: #075e54;
-        }
-        .brand-header {
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-        .conversation-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .conversation-list.hidden {
-            display: none;
-        }
-        #main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #dcf8c6;
-            padding: 15px;
-        }
-        #main-content h1 {
-            color: #075e54;
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-        #search-box {
-            display: flex;
-            margin-bottom: 15px;
-        }
-        #brand-selector {
-            margin-right: 5px;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background: #ffffff;
-            color: #333;
-        }
-        #search-input {
-            flex: 1;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        #search-button, #new-conversation-button {
-            background: #25d366;
-            color: white;
-            border: none;
-            padding: 10px;
-            margin-left: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        #chat-history {
-            flex: 1;
-            overflow-y: auto;
-            background: #ffffff;
-            padding: 10px;
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .chat-message {
-            margin-bottom: 10px;
-            display: flex;
-            align-items: flex-start;
-            max-width: 70%;
-        }
-        .chat-message.bot {
-            text-align: left;
-            color: #333;
-            background-color: #f0f0f0;
-            padding: 10px;
-            border-radius: 8px 8px 8px 0;
-            margin-right: auto;
-        }
-        .chat-message.user {
-            text-align: right;
-            color: white;
-            background-color: #25d366;
-            padding: 10px;
-            border-radius: 8px 8px 0 8px;
-            margin-left: auto;
-        }
-        a {
-            color: #128c7e;
-            text-decoration: underline;
-        }
-        .italic {
-            font-style: italic;
-        }
-    </style>
+   <style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f9f9f9; /* Fondo principal más claro */
+        color: #333;
+        display: flex;
+        height: 100vh;
+        margin: 0;
+    }
+    #container {
+        display: flex;
+        width: 100%;
+    }
+    #menu-toggle {
+        background: #004B8D; /* Azul corporativo */
+        color: white;
+        border: none;
+        padding: 10px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+    #sidebar {
+        background: #ffffff;
+        color: #333;
+        width: 250px;
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        border-right: 1px solid #ddd;
+    }
+    #sidebar h2 {
+        font-size: 20px;
+        margin-bottom: 15px;
+        color: #004B8D;
+    }
+    .brand-header {
+        font-weight: bold;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+    .conversation-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .conversation-list.hidden {
+        display: none;
+    }
+    #main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #eaeff2; /* Fondo neutro para contenido */
+        padding: 15px;
+    }
+    #main-content h1 {
+        color: #004B8D;
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+    #search-box {
+        display: flex;
+        margin-bottom: 15px;
+    }
+    #brand-selector {
+        margin-right: 5px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #ffffff;
+        color: #333;
+    }
+    #search-input {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    #search-button, #new-conversation-button {
+        background: #004B8D; /* Botones en azul corporativo */
+        color: white;
+        border: none;
+        padding: 10px;
+        margin-left: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    #chat-history {
+        flex: 1;
+        overflow-y: auto;
+        background: #ffffff;
+        padding: 10px;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .chat-message {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: flex-start;
+        max-width: 70%;
+    }
+    .chat-message.bot {
+        text-align: left;
+        color: #333;
+        background-color: #eaeff2;
+        padding: 10px;
+        border-radius: 8px 8px 8px 0;
+        margin-right: auto;
+        border: 1px solid #ccc;
+    }
+    .chat-message.user {
+        text-align: right;
+        color: white;
+        background-color: #004B8D;
+        padding: 10px;
+        border-radius: 8px 8px 0 8px;
+        margin-left: auto;
+    }
+    a {
+        color: #004B8D;
+        text-decoration: underline;
+    }
+    .italic {
+        font-style: italic;
+    }
+</style>
+
 </head>
 <body>
     <div id="container">
