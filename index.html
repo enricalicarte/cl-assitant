@@ -33,6 +33,7 @@
             flex-direction: column;
             padding: 15px;
             border-right: 1px solid #ddd;
+            overflow-y: auto;
         }
         #sidebar h2 {
             font-size: 20px;
@@ -40,49 +41,42 @@
             color: #001c50;
         }
         .brand-block {
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            background: #f4f3f0;
+            padding: 15px;
             border-radius: 8px;
-            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         .brand-header {
-            background: #799bb9;
-            color: white;
-            padding: 10px;
-            cursor: pointer;
-            font-size: 16px;
             font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            color: #001c50;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .brand-header:hover {
-            background: #678ab0;
+            color: #799bb9;
         }
         .conversation-list {
             list-style: none;
             padding: 0;
             margin: 0;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-        .conversation-list.open {
-            max-height: 300px;
-            overflow-y: auto;
+            display: none;
         }
         .conversation-item {
             cursor: pointer;
-            padding: 10px;
-            background: #f0f0f0;
-            border-bottom: 1px solid #ddd;
+            margin: 5px 0;
+            padding: 8px;
+            background: #ffffff;
+            border-radius: 4px;
+            border: 1px solid #ddd;
             transition: background 0.3s;
         }
-        .conversation-item:last-child {
-            border-bottom: none;
-        }
         .conversation-item:hover {
-            background: #e0e0e0;
+            background: #f0f0f0;
         }
         #main-content {
             flex: 1;
@@ -137,35 +131,28 @@
             margin-bottom: 10px;
             display: flex;
             align-items: flex-start;
-            max-width: 80%;
-            line-height: 1.6;
+            max-width: 70%;
         }
         .chat-message.bot {
             text-align: left;
-            color: #333;
-            background-color: #f0f8ff;
-            padding: 15px;
-            border-radius: 10px 10px 10px 0;
+            color: #ffffff;
+            background-color: #799bb9;
+            padding: 10px;
+            border-radius: 8px 8px 8px 0;
             margin-right: auto;
-            border: 1px solid #a7d2f2;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #b3e5fc;
         }
         .chat-message.user {
             text-align: right;
-            color: white;
-            background-color: #799bb9;
-            padding: 15px;
-            border-radius: 10px 10px 0 10px;
+            color: #ffffff;
+            background-color: #9abbd8;
+            padding: 10px;
+            border-radius: 8px 8px 0 8px;
             margin-left: auto;
-            border: 1px solid #678ab0;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
         a {
-            color: #007bff;
-            text-decoration: underline;
-        }
-        a:hover {
-            color: #0056b3;
+            color: #128c7e;
+            text-decoration: none;
         }
         .italic {
             font-style: italic;
@@ -176,22 +163,31 @@
     <div id="container">
         <aside id="sidebar">
             <h2>Historial</h2>
-            <div class="brand-block">
-                <div class="brand-header" data-brand="Cumlaude">Cumlaude<span>▼</span></div>
+            <div class="brand-block" id="Cumlaude-block">
+                <div class="brand-header" data-brand="Cumlaude">
+                    Cumlaude Lab
+                    <span>+</span>
+                </div>
                 <ul class="conversation-list" id="Cumlaude-list">
                     <li class="conversation-item">Conversación 1</li>
                     <li class="conversation-item">Conversación 2</li>
                 </ul>
             </div>
-            <div class="brand-block">
-                <div class="brand-header" data-brand="Rilastil">Rilastil<span>▼</span></div>
+            <div class="brand-block" id="Rilastil-block">
+                <div class="brand-header" data-brand="Rilastil">
+                    Rilastil
+                    <span>+</span>
+                </div>
                 <ul class="conversation-list" id="Rilastil-list">
                     <li class="conversation-item">Conversación 1</li>
                     <li class="conversation-item">Conversación 2</li>
                 </ul>
             </div>
-            <div class="brand-block">
-                <div class="brand-header" data-brand="Sensilis">Sensilis<span>▼</span></div>
+            <div class="brand-block" id="Sensilis-block">
+                <div class="brand-header" data-brand="Sensilis">
+                    Sensilis
+                    <span>+</span>
+                </div>
                 <ul class="conversation-list" id="Sensilis-list">
                     <li class="conversation-item">Conversación 1</li>
                     <li class="conversation-item">Conversación 2</li>
@@ -217,81 +213,32 @@
     </div>
     <script>
         const chatHistory = document.getElementById("chat-history");
+        const brandSelector = document.getElementById("brand-selector");
         const brandHeaders = document.querySelectorAll(".brand-header");
-        const searchInput = document.getElementById("search-input");
-        const searchButton = document.getElementById("search-button");
-        const clearChatButton = document.getElementById("clear-chat-button");
 
         // Mostrar/ocultar listas de conversaciones
         brandHeaders.forEach(header => {
             header.addEventListener("click", () => {
-                const list = header.nextElementSibling;
-                list.classList.toggle("open");
+                const brand = header.dataset.brand;
+                const list = document.getElementById(`${brand}-list`);
+                list.style.display = list.style.display === "block" ? "none" : "block";
             });
         });
 
-        clearChatButton.addEventListener("click", () => {
-            chatHistory.innerHTML = ""; // Limpia el historial de mensajes
-            console.clear(); // Limpia la consola
-            console.log("Historial de chat limpiado.");
+        // Cambiar de marca
+        brandSelector.addEventListener("change", () => {
+            const selectedBrand = brandSelector.value;
+            chatHistory.innerHTML = ""; // Limpia el historial
+            console.log(`Cambio de marca a: ${selectedBrand}`);
         });
 
-        async function addMessage(content, sender) {
+        function addMessage(content, sender) {
             const messageDiv = document.createElement("div");
             messageDiv.className = `chat-message ${sender}`;
-            if (sender === "bot") {
-                messageDiv.innerHTML = parseMessage(content);
-            } else {
-                messageDiv.textContent = content;
-            }
+            messageDiv.textContent = content;
             chatHistory.appendChild(messageDiv);
             chatHistory.scrollTop = chatHistory.scrollHeight;
         }
-
-        function parseMessage(content) {
-            // Convierte enlaces en texto clicable
-            const urlRegex = /(https?:\/\/[^\s]+)/g;
-            content = content.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
-
-            // Aplica cursiva a frases específicas
-            const italicRegex = /(Los enlaces que sean clicables y con un color adaptado\.)/g;
-            content = content.replace(italicRegex, '<span class="italic">$1</span>');
-
-            return content;
-        }
-
-        async function sendMessage() {
-            const message = searchInput.value.trim();
-            const selectedBrand = document.getElementById("brand-selector").value;
-
-            if (!message) return;
-
-            addMessage(message, "user");
-            searchInput.value = "";
-
-            try {
-                const response = await fetch("https://multiplicaenric.app.n8n.cloud/webhook-test/527dea54-5355-4717-bbb7-59ecd936269b", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message, brand: selectedBrand }),
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                addMessage(data.output || "Sin respuesta del servidor.", "bot");
-            } catch (error) {
-                console.error("Error al enviar mensaje:", error);
-                addMessage("Error al conectar con el servidor.", "bot");
-            }
-        }
-
-        searchButton.addEventListener("click", sendMessage);
-        searchInput.addEventListener("keypress", (event) => {
-            if (event.key === "Enter") sendMessage();
-        });
     </script>
 </body>
 </html>
