@@ -236,7 +236,7 @@
             console.log("Historial de chat limpiado.");
         });
 
-        function addMessage(content, sender) {
+        async function addMessage(content, sender) {
             const messageDiv = document.createElement("div");
             messageDiv.className = `chat-message ${sender}`;
             if (sender === "bot") {
@@ -260,12 +260,37 @@
             return content;
         }
 
-        searchButton.addEventListener("click", () => {
+        async function sendMessage() {
             const message = searchInput.value.trim();
-            if (message) {
-                addMessage(message, "user");
-                searchInput.value = "";
+            const selectedBrand = document.getElementById("brand-selector").value;
+
+            if (!message) return;
+
+            addMessage(message, "user");
+            searchInput.value = "";
+
+            try {
+                const response = await fetch("https://your-webhook-endpoint.com", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message, brand: selectedBrand }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                addMessage(data.output || "Sin respuesta del servidor.", "bot");
+            } catch (error) {
+                console.error("Error al enviar mensaje:", error);
+                addMessage("Error al conectar con el servidor.", "bot");
             }
+        }
+
+        searchButton.addEventListener("click", sendMessage);
+        searchInput.addEventListener("keypress", (event) => {
+            if (event.key === "Enter") sendMessage();
         });
     </script>
 </body>
