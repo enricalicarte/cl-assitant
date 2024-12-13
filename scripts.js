@@ -1,25 +1,10 @@
 const chatHistory = document.getElementById("chat-history");
 const brandSelector = document.getElementById("brand-selector");
-const brandHeaders = document.querySelectorAll(".brand-header");
 const searchInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
 const clearChatButton = document.getElementById("clear-chat-button");
 
-// Mostrar/ocultar listas de conversaciones
-brandHeaders.forEach(header => {
-    header.addEventListener("click", () => {
-        const brand = header.dataset.brand;
-        const list = document.getElementById(`${brand}-list`);
-        list.style.display = list.style.display === "block" ? "none" : "block";
-    });
-});
-
-// Cambiar de marca
-brandSelector.addEventListener("change", () => {
-    chatHistory.innerHTML = "";
-});
-
-// Enviar mensaje
+// Enviar mensaje al Webhook
 async function sendMessage() {
     const message = searchInput.value.trim();
     const selectedBrand = brandSelector.value;
@@ -33,10 +18,14 @@ async function sendMessage() {
     searchInput.value = "";
 
     try {
-        const response = await fetch("https://multiplicaenric.app.n8n.cloud/webhook-test/527dea54-5355-4717-bbb7-59ecd936269b", {
+        const response = await fetch("https://tu-n8n-url/webhook", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message, brand: selectedBrand }),
+            body: JSON.stringify({
+                type: "message",
+                message,
+                brand: selectedBrand,
+            }),
         });
 
         if (!response.ok) {
@@ -60,14 +49,38 @@ async function sendMessage() {
     }
 }
 
-// Añadir mensaje al historial con formato HTML y valoración
+// Enviar valoración al Webhook
+async function sendRating(question, answer, rating) {
+    try {
+        const response = await fetch("https://tu-n8n-url/webhook", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                type: "rating",
+                question,
+                answer,
+                rating,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error al guardar la valoración: ${response.status} ${response.statusText}`);
+        }
+
+        console.log("Valoración enviada con éxito");
+    } catch (error) {
+        console.error("Error al enviar la valoración:", error);
+    }
+}
+
+// Añadir mensaje al historial con formato HTML y sistema de valoración
 function addMessage(content, sender) {
     const messageDiv = document.createElement("div");
     messageDiv.className = `chat-message ${sender}`;
 
     if (sender === "bot") {
         messageDiv.innerHTML = content; // Renderiza HTML correctamente
-        addStarRating(messageDiv); // Agrega las estrellas después del mensaje del bot
+        addStarRating(messageDiv, content); // Agrega el sistema de valoración después del mensaje del bot
     } else {
         messageDiv.textContent = content; // Texto plano para mensajes del usuario
     }
@@ -76,10 +89,11 @@ function addMessage(content, sender) {
     chatHistory.scrollTop = chatHistory.scrollHeight;
 }
 
-// Generar estrellas clicables para valoración
-function addStarRating(parentElement) {
+// Agregar sistema de valoración con estrellas
+function addStarRating(parentElement, answer) {
     const starContainer = document.createElement("div");
     starContainer.className = "star-rating";
+    const question = searchInput.value.trim(); // Toma la pregunta desde el input
 
     for (let i = 1; i <= 5; i++) {
         const star = document.createElement("span");
@@ -91,7 +105,10 @@ function addStarRating(parentElement) {
         star.addEventListener("click", (event) => {
             const rating = event.target.dataset.value;
             updateStarRating(starContainer, rating);
-            console.log(`Valoración seleccionada: ${rating}`); // Puedes enviar este dato al servidor si es necesario
+            console.log(`Valoración seleccionada: ${rating}`);
+
+            // Enviar valoración al Webhook
+            sendRating(question, answer, rating);
         });
 
         starContainer.appendChild(star);
@@ -115,10 +132,13 @@ function updateStarRating(container, rating) {
 // Formatear texto con marcas a HTML
 function formatMessageToHTML(content) {
     return content
-        .replace(/\n/g, "<br>")
-        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-        .replace(/\*(.*?)\*/g, "<em>$1</em>")
-        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // **texto** -> <strong>texto</strong>
+        .replace(/\*(.*?)\*/g, "<em>$1</em>") // *texto* -> <em>texto</em>
+        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>') // [texto](url) -> <a href="url">texto</a>
+        .replace(/\n\n/g, "</p><p>") // Doble salto de línea -> cierre y apertura de párrafo
+        .replace(/\n/g, "<br>") // Salto de línea -> <br>
+        .replace(/^/, "<p>") // Agregar <p> al inicio
+        .replace(/$/, "</p>"); // Agregar </p> al final
 }
 
 // Limpiar chat
