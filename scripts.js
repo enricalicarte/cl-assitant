@@ -223,3 +223,31 @@ searchInput.addEventListener("keypress", (event) => {
 
 // Manejar clic en botón Enviar
 searchButton.addEventListener("click", sendMessage);
+
+
+
+function showCommentBox(container, question, answer, rating) {
+    console.log("Casilla de comentarios añadida al contenedor:", container);
+    const commentBox = document.createElement("div");
+    commentBox.className = "comment-box";
+
+    const textArea = document.createElement("textarea");
+    textArea.placeholder = "Por favor, dinos cómo podemos mejorar...";
+    textArea.rows = 3;
+
+    const submitButton = document.createElement("button");
+    submitButton.textContent = "Enviar comentario";
+    submitButton.addEventListener("click", () => {
+        const comment = textArea.value.trim();
+        if (comment) {
+            sendComment(question, answer, rating, comment);
+            commentBox.innerHTML = "<p>Gracias por tu comentario.</p>";
+        } else {
+            alert("Por favor, escribe un comentario antes de enviar.");
+        }
+    });
+
+    commentBox.appendChild(textArea);
+    commentBox.appendChild(submitButton);
+    container.appendChild(commentBox);
+}
