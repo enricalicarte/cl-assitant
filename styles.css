@@ -149,3 +149,20 @@ body {
     text-decoration: underline;
     color: #0056b3;
 }
+.star-rating {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    font-size: 20px;
+    color: #ccc; /* Color base de las estrellas */
+    cursor: pointer;
+}
+
+.star-rating .star {
+    transition: color 0.3s;
+}
+
+.star-rating .star:hover,
+.star-rating .star.selected {
+    color: #f1c40f; /* Color de estrellas seleccionadas */
+}
