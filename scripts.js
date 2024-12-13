@@ -17,6 +17,9 @@ async function sendMessage() {
     addMessage(message, "user");
     searchInput.value = "";
 
+    // Mostrar mensaje de carga temporal
+    const loadingMessage = addMessage("Escribiendo...", "bot");
+
     try {
         const response = await fetch("https://tu-n8n-url/webhook", {
             method: "POST",
@@ -42,10 +45,12 @@ async function sendMessage() {
             botMessage = await response.text();
         }
 
-        addMessage(botMessage, "bot");
+        // Reemplazar mensaje de carga con la respuesta del bot
+        loadingMessage.innerHTML = botMessage;
+        addStarRating(loadingMessage, botMessage);
     } catch (error) {
         console.error("Error al conectar con el servidor:", error);
-        addMessage("Error al conectar con el servidor.", "bot");
+        loadingMessage.innerHTML = "Error al conectar con el servidor.";
     }
 }
 
@@ -87,13 +92,17 @@ function addMessage(content, sender) {
 
     chatHistory.appendChild(messageDiv);
     chatHistory.scrollTop = chatHistory.scrollHeight;
+    return messageDiv; // Devuelve el elemento para futuras actualizaciones
 }
 
 // Agregar sistema de valoración con estrellas
 function addStarRating(parentElement, answer) {
     const starContainer = document.createElement("div");
     starContainer.className = "star-rating";
-    const question = searchInput.value.trim(); // Toma la pregunta desde el input
+
+    // Obtener la última pregunta del usuario en el historial
+    const question = [...chatHistory.querySelectorAll(".chat-message.user")]
+        .pop()?.textContent.trim() || "Pregunta desconocida";
 
     for (let i = 1; i <= 5; i++) {
         const star = document.createElement("span");
