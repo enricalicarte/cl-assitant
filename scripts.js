@@ -60,19 +60,56 @@ async function sendMessage() {
     }
 }
 
-// Añadir mensaje al historial con formato HTML
+// Añadir mensaje al historial con formato HTML y valoración
 function addMessage(content, sender) {
     const messageDiv = document.createElement("div");
     messageDiv.className = `chat-message ${sender}`;
 
     if (sender === "bot") {
         messageDiv.innerHTML = content; // Renderiza HTML correctamente
+        addStarRating(messageDiv); // Agrega las estrellas después del mensaje del bot
     } else {
         messageDiv.textContent = content; // Texto plano para mensajes del usuario
     }
 
     chatHistory.appendChild(messageDiv);
     chatHistory.scrollTop = chatHistory.scrollHeight;
+}
+
+// Generar estrellas clicables para valoración
+function addStarRating(parentElement) {
+    const starContainer = document.createElement("div");
+    starContainer.className = "star-rating";
+
+    for (let i = 1; i <= 5; i++) {
+        const star = document.createElement("span");
+        star.className = "star";
+        star.textContent = "★";
+        star.dataset.value = i;
+
+        // Manejar el clic en la estrella
+        star.addEventListener("click", (event) => {
+            const rating = event.target.dataset.value;
+            updateStarRating(starContainer, rating);
+            console.log(`Valoración seleccionada: ${rating}`); // Puedes enviar este dato al servidor si es necesario
+        });
+
+        starContainer.appendChild(star);
+    }
+
+    parentElement.appendChild(starContainer);
+}
+
+// Actualizar visualización de estrellas seleccionadas
+function updateStarRating(container, rating) {
+    const stars = container.querySelectorAll(".star");
+    stars.forEach((star, index) => {
+        if (index < rating) {
+            star.classList.add("selected");
+        } else {
+            star.classList.remove("selected");
+        }
+    });
 }
 
 // Formatear texto con marcas a HTML
