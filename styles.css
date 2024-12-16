@@ -200,3 +200,49 @@ body {
         transform: translateY(0);
     }
 }
+
+/* Comment Box */
+.comment-box {
+    margin-top: 10px;
+    padding: 15px;
+    background-color: #fffbe5; /* Fondo claro */
+    border: 1px solid #ffcc00; /* Bordes visibles */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    width: 100%; /* Ancho igual al contenedor del mensaje */
+}
+
+.comment-box label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.comment-box textarea {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: none;
+}
+
+.comment-box .send-comment-button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #001c50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.comment-box .send-comment-button:hover {
+    background-color: #003080;
+}
+
+.comment-box .send-comment-button:active {
+    background-color: #002060;
+}
