@@ -23,20 +23,28 @@ body {
 #main-content h1 {
     color: #001c50;
     margin-bottom: 15px;
+    font-size: 24px;
 }
 
 #search-box {
     display: flex;
-    align-items: center; /* Alinear verticalmente */
-    gap: 10px; /* Espaciado entre elementos */
+    flex-direction: column; /* Organización vertical */
+    gap: 10px; /* Espaciado entre los elementos */
+    margin-bottom: 15px;
 }
 
 #search-input {
-    flex: 1; /* Ocupa todo el ancho disponible */
-    padding: 10px;
+    padding: 12px;
     font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    width: 100%; /* Ocupa todo el ancho disponible */
+}
+
+#controls {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaciado entre los controles */
 }
 
 #brand-selector {
@@ -44,7 +52,7 @@ body {
     font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    width: 200px; /* Mantiene un tamaño razonable */
+    flex: 1; /* Permite que el selector ajuste su tamaño relativo */
 }
 
 #search-button, #clear-chat-button {
@@ -55,13 +63,17 @@ body {
     cursor: pointer;
     font-size: 16px;
     border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+#search-button:hover, #clear-chat-button:hover {
+    background: #002b80; /* Color más oscuro al pasar el mouse */
 }
 
 #chat-history {
     flex: 1;
     background: white;
     padding: 10px;
-    margin-top: 10px;
     border-radius: 8px;
     overflow-y: auto;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
@@ -91,12 +103,14 @@ body {
 .star-rating {
     margin-top: 10px;
     display: flex;
+    gap: 5px;
 }
 
 .star-rating .star {
     cursor: pointer;
     font-size: 20px;
     color: #cccccc;
+    transition: color 0.3s ease;
 }
 
 .star-rating .star.selected {
@@ -110,7 +124,7 @@ body {
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* display: none;  Oculto por defecto */
+    display: none; /* Oculto por defecto */
 }
 
 .feedback-box textarea {
