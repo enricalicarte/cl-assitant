@@ -1,4 +1,3 @@
-/* General */
 body {
     font-family: Arial, sans-serif;
     background: #e5ddd5;
@@ -7,13 +6,10 @@ body {
     height: 100vh;
     margin: 0;
 }
-
 #container {
     display: flex;
     width: 100%;
 }
-
-/* Sidebar */
 #sidebar {
     background: #ffffff;
     color: #333;
@@ -24,50 +20,94 @@ body {
     border-right: 1px solid #ddd;
     overflow-y: auto;
 }
-
 #sidebar h2 {
     font-size: 20px;
     margin-bottom: 15px;
     color: #001c50;
 }
-
-/* Botones */
-#search-button, 
-#clear-chat-button, 
-.comment-box button {
+.brand-block {
+    margin-bottom: 20px;
+    background: #f4f3f0;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.brand-header {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    color: #001c50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.brand-header:hover {
+    color: #799bb9;
+}
+.conversation-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+}
+.conversation-item {
+    cursor: pointer;
+    margin: 5px 0;
+    padding: 8px;
+    background: #ffffff;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    transition: background 0.3s;
+}
+.conversation-item:hover {
+    background: #f0f0f0;
+}
+#main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f4f3f0;
+    padding: 15px;
+}
+#main-content h1 {
+    color: #001c50;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+#search-box {
+    display: flex;
+    margin-bottom: 15px;
+}
+#brand-selector {
+    margin-right: 5px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #333;
+}
+#search-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+#search-button, #clear-chat-button {
     background: #001c50;
     color: white;
     border: none;
     padding: 10px;
-    border-radius: 4px;
+    margin-left: 5px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s ease;
 }
-
-#search-button:hover, 
-#clear-chat-button:hover, 
-.comment-box button:hover {
-    background-color: #003080;
-}
-
-/* Prominencia al botón de enviar */
-#search-button {
-    background: #0049d1;
-    font-weight: bold;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-#search-button:hover {
-    background: #002ea8;
-}
-
-/* Chat History */
 #chat-history {
     flex: 1;
     overflow-y: auto;
-    background: #9abbd8;
+    background: #ffffff;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -78,8 +118,6 @@ body {
     word-wrap: break-word;
     text-align: left;
 }
-
-/* Estilo para los mensajes */
 .chat-message {
     margin-bottom: 15px;
     display: block;
@@ -87,7 +125,6 @@ body {
     max-width: 100%;
     white-space: normal;
 }
-
 .chat-message.bot {
     text-align: left;
     background-color: #f9f9f9;
@@ -96,7 +133,6 @@ body {
     margin-right: auto;
     border: 1px solid #cccccc;
 }
-
 .chat-message.user {
     text-align: right;
     background-color: #d1ecf1;
@@ -105,71 +141,11 @@ body {
     margin-left: auto;
     border: 1px solid #17a2b8;
 }
-
 .chat-message a {
     color: #007bff;
     text-decoration: none;
 }
-
 .chat-message a:hover {
     text-decoration: underline;
     color: #0056b3;
-}
-
-/* Estrellas */
-.star-rating {
-    display: flex;
-    gap: 5px;
-    margin-top: 10px;
-    font-size: 20px;
-    color: #ccc;
-    cursor: pointer;
-}
-
-.star-rating .star {
-    transition: color 0.3s;
-}
-
-.star-rating .star:hover,
-.star-rating .star.selected {
-    color: #f1c40f;
-}
-
-/* Caja de comentarios */
-.comment-box {
-    margin-top: 10px;
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%; /* Asegura que no exceda el ancho */
-}
-
-.comment-box textarea {
-    width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 10px;
-    font-size: 14px;
-    resize: none;
-    font-family: inherit;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.comment-box button {
-    align-self: flex-start;
-    padding: 10px 15px;
-    border-radius: 4px;
-    font-size: 16px;
-    background-color: #001c50;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.comment-box button:hover {
-    background-color: #003080;
 }
