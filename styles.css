@@ -27,31 +27,34 @@ body {
 
 #search-box {
     display: flex;
-    margin-bottom: 15px;
+    align-items: center; /* Alinear verticalmente */
+    gap: 10px; /* Espaciado entre elementos */
 }
 
 #search-input {
+    flex: 1; /* Ocupa todo el ancho disponible */
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    margin-right: 5px;
 }
+
 #brand-selector {
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    margin-right: 5px;
+    width: 200px; /* Mantiene un tamaño razonable */
 }
 
 #search-button, #clear-chat-button {
     background: #001c50;
     color: white;
     padding: 10px;
-    margin-right: 1px;
     border: none;
     cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
 }
 
 #chat-history {
