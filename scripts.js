@@ -120,12 +120,80 @@ function addStarRating(parentElement, answer) {
 
             // Enviar valoración al webhook
             sendRating(question, answer, rating);
+
+            // Mostrar ventana de comentarios para valoraciones bajas (1, 2 o 3)
+            if (rating <= 3) {
+                showCommentBox(parentElement, question, answer, rating);
+            }
         });
 
         starContainer.appendChild(star);
     }
 
     parentElement.appendChild(starContainer);
+}
+
+// Mostrar ventana para añadir comentarios
+function showCommentBox(parentElement, question, answer, rating) {
+    const commentBox = document.createElement("div");
+    commentBox.className = "comment-box";
+
+    // Crear elementos dentro de la ventana
+    const commentLabel = document.createElement("label");
+    commentLabel.textContent = "Por favor, dinos cómo podemos mejorar:";
+    commentLabel.htmlFor = "comment-input";
+
+    const commentInput = document.createElement("textarea");
+    commentInput.id = "comment-input";
+    commentInput.placeholder = "Escribe tus comentarios aquí...";
+    commentInput.rows = 3;
+
+    const sendCommentButton = document.createElement("button");
+    sendCommentButton.textContent = "Enviar comentario";
+    sendCommentButton.className = "send-comment-button";
+
+    // Manejar el clic en el botón de enviar
+    sendCommentButton.addEventListener("click", async () => {
+        const comment = commentInput.value.trim();
+        if (!comment) {
+            alert("Por favor, escribe un comentario.");
+            return;
+        }
+
+        // Enviar el comentario al webhook
+        try {
+            const response = await fetch("https://multiplicaenric.app.n8n.cloud/webhook-test/527dea54-5355-4717-bbb7-59ecd936269b", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    type: "comment",
+                    question,
+                    answer,
+                    rating,
+                    comment,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error al enviar el comentario: ${response.status} ${response.statusText}`);
+            }
+
+            console.log("Comentario enviado con éxito");
+            alert("Gracias por tu comentario.");
+            parentElement.removeChild(commentBox); // Eliminar la ventana de comentarios
+        } catch (error) {
+            console.error("Error al enviar el comentario:", error);
+            alert("No se pudo enviar tu comentario. Inténtalo de nuevo más tarde.");
+        }
+    });
+
+    // Añadir los elementos a la ventana
+    commentBox.appendChild(commentLabel);
+    commentBox.appendChild(commentInput);
+    commentBox.appendChild(sendCommentButton);
+
+    // Insertar la ventana después del mensaje del bot
+    parentElement.appendChild(commentBox);
 }
 
 // Actualizar visualización de estrellas seleccionadas
