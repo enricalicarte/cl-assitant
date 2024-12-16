@@ -31,100 +31,36 @@ body {
     color: #001c50;
 }
 
-.brand-block {
-    margin-bottom: 20px;
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.brand-header {
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    color: #001c50;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.brand-header:hover {
-    color: #799bb9;
-}
-
-.conversation-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: none;
-}
-
-.conversation-item {
-    cursor: pointer;
-    margin: 5px 0;
-    padding: 8px;
-    background: #ffffff;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    transition: background 0.3s;
-}
-
-.conversation-item:hover {
-    background: #f0f0f0;
-}
-
-/* Main Content */
-#main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: #f4f3f0;
-    padding: 15px;
-}
-
-#main-content h1 {
-    color: #001c50;
-    font-size: 24px;
-    margin-bottom: 15px;
-}
-
-#search-box {
-    display: flex;
-    margin-bottom: 15px;
-    gap: 10px;
-}
-
-#brand-selector,
-#search-input {
-    padding: 10px;
-    font-size: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: #ffffff;
-    color: #333;
-}
-
-#search-input {
-    flex: 1;
-}
-
-#search-button,
-#clear-chat-button {
+/* Botones */
+#search-button, 
+#clear-chat-button, 
+.comment-box button {
     background: #001c50;
     color: white;
     border: none;
-    padding: 10px 15px;
+    padding: 10px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s ease;
 }
 
-#search-button:hover,
-#clear-chat-button:hover {
-    background: #003080;
+#search-button:hover, 
+#clear-chat-button:hover, 
+.comment-box button:hover {
+    background-color: #003080;
+}
+
+/* Prominencia al botón de enviar */
+#search-button {
+    background: #0049d1;
+    font-weight: bold;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#search-button:hover {
+    background: #002ea8;
 }
 
 /* Chat History */
@@ -140,8 +76,10 @@ body {
     max-height: 80%;
     white-space: normal;
     word-wrap: break-word;
+    text-align: left;
 }
 
+/* Estilo para los mensajes */
 .chat-message {
     margin-bottom: 15px;
     display: block;
@@ -151,21 +89,21 @@ body {
 }
 
 .chat-message.bot {
+    text-align: left;
     background-color: #f9f9f9;
     padding: 12px;
     border-radius: 10px 10px 10px 0;
     margin-right: auto;
     border: 1px solid #cccccc;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .chat-message.user {
+    text-align: right;
     background-color: #d1ecf1;
     padding: 12px;
     border-radius: 10px 10px 0 10px;
     margin-left: auto;
     border: 1px solid #17a2b8;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .chat-message a {
@@ -178,7 +116,7 @@ body {
     color: #0056b3;
 }
 
-/* Star Rating */
+/* Estrellas */
 .star-rating {
     display: flex;
     gap: 5px;
@@ -197,42 +135,41 @@ body {
     color: #f1c40f;
 }
 
-/* Comment Box */
+/* Caja de comentarios */
 .comment-box {
     margin-top: 10px;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     gap: 10px;
-    background: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 100%;
+    width: 100%; /* Asegura que no exceda el ancho */
 }
 
 .comment-box textarea {
     width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     padding: 10px;
     font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
     resize: none;
-    font-family: Arial, sans-serif;
+    font-family: inherit;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .comment-box button {
-    align-self: flex-end;
-    padding: 8px 16px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
+    align-self: flex-start;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #001c50;
+    font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .comment-box button:hover {
-    background: #0056b3;
+    background-color: #003080;
 }
