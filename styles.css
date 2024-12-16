@@ -1,3 +1,4 @@
+/* General */
 body {
     font-family: Arial, sans-serif;
     background: #e5ddd5;
@@ -6,10 +7,13 @@ body {
     height: 100vh;
     margin: 0;
 }
+
 #container {
     display: flex;
     width: 100%;
 }
+
+/* Sidebar */
 #sidebar {
     background: #ffffff;
     color: #333;
@@ -20,18 +24,21 @@ body {
     border-right: 1px solid #ddd;
     overflow-y: auto;
 }
+
 #sidebar h2 {
     font-size: 20px;
     margin-bottom: 15px;
     color: #001c50;
 }
+
 .brand-block {
     margin-bottom: 20px;
-    background: #f4f3f0;
+    background: #f9f9f9;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
 .brand-header {
     font-weight: bold;
     font-size: 18px;
@@ -42,15 +49,18 @@ body {
     justify-content: space-between;
     align-items: center;
 }
+
 .brand-header:hover {
     color: #799bb9;
 }
+
 .conversation-list {
     list-style: none;
     padding: 0;
     margin: 0;
     display: none;
 }
+
 .conversation-item {
     cursor: pointer;
     margin: 5px 0;
@@ -60,9 +70,12 @@ body {
     border: 1px solid #ddd;
     transition: background 0.3s;
 }
+
 .conversation-item:hover {
     background: #f0f0f0;
 }
+
+/* Main Content */
 #main-content {
     flex: 1;
     display: flex;
@@ -70,17 +83,21 @@ body {
     background: #f4f3f0;
     padding: 15px;
 }
+
 #main-content h1 {
     color: #001c50;
     font-size: 24px;
     margin-bottom: 15px;
 }
+
 #search-box {
     display: flex;
     margin-bottom: 15px;
+    gap: 10px;
 }
-#brand-selector {
-    margin-right: 5px;
+
+#brand-selector,
+#search-input {
     padding: 10px;
     font-size: 15px;
     border: 1px solid #ddd;
@@ -88,22 +105,29 @@ body {
     background: #ffffff;
     color: #333;
 }
+
 #search-input {
     flex: 1;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
 }
-#search-button, #clear-chat-button {
+
+#search-button,
+#clear-chat-button {
     background: #001c50;
     color: white;
     border: none;
-    padding: 10px;
-    margin-left: 5px;
+    padding: 10px 15px;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
+    transition: background-color 0.3s ease;
 }
+
+#search-button:hover,
+#clear-chat-button:hover {
+    background: #003080;
+}
+
+/* Chat History */
 #chat-history {
     flex: 1;
     overflow-y: auto;
@@ -116,8 +140,8 @@ body {
     max-height: 80%;
     white-space: normal;
     word-wrap: break-word;
-    text-align: left;
 }
+
 .chat-message {
     margin-bottom: 15px;
     display: block;
@@ -125,36 +149,42 @@ body {
     max-width: 100%;
     white-space: normal;
 }
+
 .chat-message.bot {
-    text-align: left;
     background-color: #f9f9f9;
     padding: 12px;
     border-radius: 10px 10px 10px 0;
     margin-right: auto;
     border: 1px solid #cccccc;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
 .chat-message.user {
-    text-align: right;
     background-color: #d1ecf1;
     padding: 12px;
     border-radius: 10px 10px 0 10px;
     margin-left: auto;
     border: 1px solid #17a2b8;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
 .chat-message a {
     color: #007bff;
     text-decoration: none;
 }
+
 .chat-message a:hover {
     text-decoration: underline;
     color: #0056b3;
 }
+
+/* Star Rating */
 .star-rating {
     display: flex;
     gap: 5px;
     margin-top: 10px;
     font-size: 20px;
-    color: #ccc; /* Color base de las estrellas */
+    color: #ccc;
     cursor: pointer;
 }
 
@@ -164,33 +194,45 @@ body {
 
 .star-rating .star:hover,
 .star-rating .star.selected {
-    color: #f1c40f; /* Color de estrellas seleccionadas */
+    color: #f1c40f;
 }
+
+/* Comment Box */
 .comment-box {
     margin-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 10px;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
 }
 
 .comment-box textarea {
     width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 5px;
+    padding: 10px;
     font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    resize: none;
+    font-family: Arial, sans-serif;
 }
 
 .comment-box button {
-    align-self: flex-start;
-    padding: 5px 10px;
-    background-color: #001c50;
+    align-self: flex-end;
+    padding: 8px 16px;
+    background: #007bff;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
+    font-size: 14px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .comment-box button:hover {
-    background-color: #003080;
+    background: #0056b3;
 }
