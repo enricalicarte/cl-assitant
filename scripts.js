@@ -167,14 +167,32 @@ function showCommentBox(container, question, answer, rating) {
     const textArea = document.createElement("textarea");
     textArea.placeholder = "Por favor, dinos cómo podemos mejorar...";
     textArea.rows = 3;
+    textArea.style.width = "100%"; // Ajusta el ancho al mensaje anterior
+    textArea.style.padding = "10px";
+    textArea.style.border = "1px solid #ccc";
+    textArea.style.borderRadius = "8px";
+    textArea.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
+    textArea.style.fontSize = "14px";
+    textArea.style.resize = "none";
 
     const submitButton = document.createElement("button");
     submitButton.textContent = "Enviar comentario";
+    submitButton.style.marginTop = "10px";
+    submitButton.style.padding = "8px 12px";
+    submitButton.style.border = "none";
+    submitButton.style.borderRadius = "8px";
+    submitButton.style.backgroundColor = "#007bff";
+    submitButton.style.color = "white";
+    submitButton.style.fontSize = "14px";
+    submitButton.style.cursor = "pointer";
+
     submitButton.addEventListener("click", () => {
         const comment = textArea.value.trim();
         if (comment) {
             sendComment(question, answer, rating, comment);
             commentBox.innerHTML = "<p>Gracias por tu comentario.</p>";
+            commentBox.style.color = "#007bff";
+            commentBox.style.fontSize = "14px";
         } else {
             alert("Por favor, escribe un comentario antes de enviar.");
         }
@@ -223,31 +241,3 @@ searchInput.addEventListener("keypress", (event) => {
 
 // Manejar clic en botón Enviar
 searchButton.addEventListener("click", sendMessage);
-
-
-
-function showCommentBox(container, question, answer, rating) {
-    console.log("Casilla de comentarios añadida al contenedor:", container);
-    const commentBox = document.createElement("div");
-    commentBox.className = "comment-box";
-
-    const textArea = document.createElement("textarea");
-    textArea.placeholder = "Por favor, dinos cómo podemos mejorar...";
-    textArea.rows = 3;
-
-    const submitButton = document.createElement("button");
-    submitButton.textContent = "Enviar comentario";
-    submitButton.addEventListener("click", () => {
-        const comment = textArea.value.trim();
-        if (comment) {
-            sendComment(question, answer, rating, comment);
-            commentBox.innerHTML = "<p>Gracias por tu comentario.</p>";
-        } else {
-            alert("Por favor, escribe un comentario antes de enviar.");
-        }
-    });
-
-    commentBox.appendChild(textArea);
-    commentBox.appendChild(submitButton);
-    container.appendChild(commentBox);
-}
