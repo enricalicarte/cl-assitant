@@ -1,5 +1,4 @@
 // Selección de elementos del DOM
-const chatHistory = document.getElementById("chat-history");
 const brandSelector = document.getElementById("brand-selector");
 const searchInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
@@ -20,12 +19,8 @@ async function sendMessage() {
         return;
     }
 
-    // Añadir el mensaje del usuario al historial
-    addMessage(message, "user");
-    searchInput.value = "";
-
-    // Añadir mensaje de carga temporal
-    const loadingMessage = addMessage("Escribiendo...", "bot");
+    // Mostrar mensaje de carga temporal
+    const loadingMessage = "Escribiendo...";
 
     try {
         // Enviar la solicitud al webhook
@@ -63,14 +58,9 @@ async function sendMessage() {
             botMessage = await response.text();
         }
 
-        // Reemplazar el mensaje de carga con la respuesta del bot
-        loadingMessage.innerHTML = formatMessageToHTML(botMessage);
-
-        // Añadir sistema de valoración
-        addStarRating(loadingMessage, botMessage);
+        console.log("Respuesta del bot:", botMessage);
     } catch (error) {
         console.error("Error al conectar con el servidor:", error);
-        loadingMessage.innerHTML = "Error al conectar con el servidor.";
     }
 }
 
@@ -98,133 +88,6 @@ async function sendRating(question, answer, rating) {
     }
 }
 
-// Añadir mensaje al historial
-function addMessage(content, sender) {
-    const messageDiv = document.createElement("div");
-    messageDiv.className = `chat-message ${sender}`;
-
-    if (sender === "bot") {
-        messageDiv.innerHTML = content; // Renderizar HTML correctamente
-    } else {
-        messageDiv.textContent = content; // Texto plano para mensajes del usuario
-    }
-
-    chatHistory.appendChild(messageDiv);
-    chatHistory.scrollTop = chatHistory.scrollHeight;
-    return messageDiv; // Devolver el elemento para futuras actualizaciones
-}
-
-// Añadir sistema de valoración con estrellas
-function addStarRating(parentElement, answer) {
-    const starContainer = document.createElement("div");
-    starContainer.className = "star-rating";
-
-    // Obtener la última pregunta del usuario
-    const question = [...chatHistory.querySelectorAll(".chat-message.user")]
-        .pop()?.textContent.trim() || "Pregunta desconocida";
-
-    for (let i = 1; i <= 5; i++) {
-        const star = document.createElement("span");
-        star.className = "star";
-        star.textContent = "★";
-        star.dataset.value = i;
-
-        // Evento clic en la estrella
-        star.addEventListener("click", (event) => {
-            const rating = event.target.dataset.value;
-            updateStarRating(starContainer, rating);
-            console.log(`Valoración seleccionada: ${rating}`);
-
-            // Enviar valoración al webhook
-            sendRating(question, answer, rating);
-
-            // Mostrar ventana de comentarios para valoraciones bajas (1, 2 o 3)
-            if (rating <= 3) {
-                showCommentBox(parentElement, question, answer, rating);
-            }
-        });
-
-        starContainer.appendChild(star);
-    }
-
-    parentElement.appendChild(starContainer);
-}
-
-// Mostrar ventana para añadir comentarios
-function showCommentBox(parentElement, question, answer, rating) {
-    const commentBox = document.createElement("div");
-    commentBox.className = "comment-box";
-
-    // Crear elementos dentro de la ventana
-    const commentLabel = document.createElement("label");
-    commentLabel.textContent = "Por favor, dinos cómo podemos mejorar:";
-    commentLabel.htmlFor = "comment-input";
-
-    const commentInput = document.createElement("textarea");
-    commentInput.id = "comment-input";
-    commentInput.placeholder = "Escribe tus comentarios aquí...";
-    commentInput.rows = 3;
-
-    const sendCommentButton = document.createElement("button");
-    sendCommentButton.textContent = "Enviar comentario";
-    sendCommentButton.className = "send-comment-button";
-
-    // Manejar el clic en el botón de enviar
-    sendCommentButton.addEventListener("click", async () => {
-        const comment = commentInput.value.trim();
-        if (!comment) {
-            alert("Por favor, escribe un comentario.");
-            return;
-        }
-
-        // Enviar el comentario al webhook
-        try {
-            const response = await fetch("https://multiplicaenric.app.n8n.cloud/webhook-test/527dea54-5355-4717-bbb7-59ecd936269b", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    type: "comment",
-                    question,
-                    answer,
-                    rating,
-                    comment,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error al enviar el comentario: ${response.status} ${response.statusText}`);
-            }
-
-            console.log("Comentario enviado con éxito");
-            alert("Gracias por tu comentario.");
-            parentElement.removeChild(commentBox); // Eliminar la ventana de comentarios
-        } catch (error) {
-            console.error("Error al enviar el comentario:", error);
-            alert("No se pudo enviar tu comentario. Inténtalo de nuevo más tarde.");
-        }
-    });
-
-    // Añadir los elementos a la ventana
-    commentBox.appendChild(commentLabel);
-    commentBox.appendChild(commentInput);
-    commentBox.appendChild(sendCommentButton);
-
-    // Insertar la ventana después del mensaje del bot
-    parentElement.appendChild(commentBox);
-}
-
-// Actualizar visualización de estrellas seleccionadas
-function updateStarRating(container, rating) {
-    const stars = container.querySelectorAll(".star");
-    stars.forEach((star, index) => {
-        if (index < rating) {
-            star.classList.add("selected");
-        } else {
-            star.classList.remove("selected");
-        }
-    });
-}
-
 // Formatear texto con marcas a HTML
 function formatMessageToHTML(content) {
     return content
@@ -237,11 +100,6 @@ function formatMessageToHTML(content) {
         .replace(/$/, "</p>"); // Agregar </p> al final
 }
 
-// Limpiar historial de chat
-clearChatButton.addEventListener("click", () => {
-    chatHistory.innerHTML = "";
-});
-
 // Manejar tecla Enter en el input
 searchInput.addEventListener("keypress", (event) => {
     if (event.key === "Enter") {
@@ -251,4 +109,3 @@ searchInput.addEventListener("keypress", (event) => {
 
 // Manejar clic en el botón Enviar
 searchButton.addEventListener("click", sendMessage);
-
