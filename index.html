@@ -7,19 +7,24 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-   <div id="search-box">
-    <input type="text" id="search-input" placeholder="Escribe tu mensaje aquí..." />
-    <div id="controls">
-        <select id="brand-selector">
-            <option value="cumlaude">Cumlaude Lab</option>
-            <option value="rilastil">Rilastil</option>
-            <option value="sensilis">Sensilis</option>
-        </select>
-        <button id="search-button">➔</button>
-        <button id="clear-chat-button">🗑️ Limpiar chat</button>
+    <div id="container">
+        <main id="main-content">
+            <h1>Asistente Dermofarm</h1>
+            <div id="search-box">
+                <select id="brand-selector">
+                    <option value="cumlaude">Cumlaude Lab</option>
+                    <option value="rilastil">Rilastil</option>
+                    <option value="sensilis">Sensilis</option>
+                </select>
+                <input type="text" id="search-input" placeholder="Escribe tu mensaje aquí..." />
+                <button id="search-button">➔ ENVIAR</button>
+                <button id="clear-chat-button">🗑️ Limpiar chat</button>
+            </div>
+            <div id="chat-history">
+                <!-- Historial de chat -->
+            </div>
+        </main>
     </div>
-</div>
-
     <script src="scripts.js"></script>
 </body>
 </html>
