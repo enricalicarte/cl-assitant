@@ -12,26 +12,6 @@ body {
     width: 100%;
 }
 
-#sidebar {
-    background: #ffffff;
-    width: 300px;
-    padding: 15px;
-    border-right: 1px solid #ddd;
-    overflow-y: auto;
-}
-
-#sidebar h2 {
-    color: #001c50;
-    margin-bottom: 15px;
-}
-
-.brand-block {
-    background: #f4f3f0;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
 #main-content {
     flex: 1;
     display: flex;
