@@ -1,4 +1,4 @@
-// Selección de elementos del DOM
+const chatHistory = document.getElementById("chat-history");
 const brandSelector = document.getElementById("brand-selector");
 const searchInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
@@ -9,21 +9,18 @@ async function sendMessage() {
     const message = searchInput.value.trim();
     const selectedBrand = brandSelector.value;
 
-    if (!message) {
+    if (!message || message.length > 500) {
         alert("Por favor, escribe un mensaje válido.");
         return;
     }
 
-    if (!selectedBrand) {
-        alert("Por favor, selecciona una marca.");
-        return;
-    }
+    addMessage(message, "user");
+    searchInput.value = "";
 
     // Mostrar mensaje de carga temporal
-    const loadingMessage = "Escribiendo...";
+    const loadingMessage = addMessage("Escribiendo...", "bot");
 
     try {
-        // Enviar la solicitud al webhook
         const response = await fetch("https://multiplicaenric.app.n8n.cloud/webhook-test/527dea54-5355-4717-bbb7-59ecd936269b", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -41,26 +38,19 @@ async function sendMessage() {
         const contentType = response.headers.get("Content-Type");
         let botMessage;
 
-        // Manejar respuestas JSON y HTML
         if (contentType && contentType.includes("application/json")) {
             const data = await response.json();
-
-            // Manejar el caso de un array con una propiedad `html`
-            if (Array.isArray(data) && data[0]?.html) {
-                botMessage = data[0].html;
-            } else if (data.output) {
-                botMessage = data.output;
-            } else {
-                botMessage = "Formato de respuesta desconocido.";
-            }
+            botMessage = formatMessageToHTML(data.output || "Sin respuesta del servidor.");
         } else {
-            // Si la respuesta no es JSON, tratarla como texto plano (HTML)
             botMessage = await response.text();
         }
 
-        console.log("Respuesta del bot:", botMessage);
+        // Reemplazar mensaje de carga con la respuesta del bot
+        loadingMessage.innerHTML = botMessage;
+        addStarRating(loadingMessage, botMessage);
     } catch (error) {
         console.error("Error al conectar con el servidor:", error);
+        loadingMessage.innerHTML = "Error al conectar con el servidor.";
     }
 }
 
@@ -88,6 +78,66 @@ async function sendRating(question, answer, rating) {
     }
 }
 
+// Añadir mensaje al historial con formato HTML y sistema de valoración
+function addMessage(content, sender) {
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `chat-message ${sender}`;
+
+    if (sender === "bot") {
+        messageDiv.innerHTML = content; // Renderiza HTML correctamente
+        addStarRating(messageDiv, content); // Agrega el sistema de valoración después del mensaje del bot
+    } else {
+        messageDiv.textContent = content; // Texto plano para mensajes del usuario
+    }
+
+    chatHistory.appendChild(messageDiv);
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+    return messageDiv; // Devuelve el elemento para futuras actualizaciones
+}
+
+// Agregar sistema de valoración con estrellas
+function addStarRating(parentElement, answer) {
+    const starContainer = document.createElement("div");
+    starContainer.className = "star-rating";
+
+    // Obtener la última pregunta del usuario en el historial
+    const question = [...chatHistory.querySelectorAll(".chat-message.user")]
+        .pop()?.textContent.trim() || "Pregunta desconocida";
+
+    for (let i = 1; i <= 5; i++) {
+        const star = document.createElement("span");
+        star.className = "star";
+        star.textContent = "★";
+        star.dataset.value = i;
+
+        // Manejar el clic en la estrella
+        star.addEventListener("click", (event) => {
+            const rating = event.target.dataset.value;
+            updateStarRating(starContainer, rating);
+            console.log(`Valoración seleccionada: ${rating}`);
+
+            // Enviar valoración al Webhook
+            sendRating(question, answer, rating);
+        });
+
+        starContainer.appendChild(star);
+    }
+
+    parentElement.appendChild(starContainer);
+}
+
+// Actualizar visualización de estrellas seleccionadas
+function updateStarRating(container, rating) {
+    const stars = container.querySelectorAll(".star");
+    stars.forEach((star, index) => {
+        if (index < rating) {
+            star.classList.add("selected");
+        } else {
+            star.classList.remove("selected");
+        }
+    });
+}
+
 // Formatear texto con marcas a HTML
 function formatMessageToHTML(content) {
     return content
@@ -100,12 +150,17 @@ function formatMessageToHTML(content) {
         .replace(/$/, "</p>"); // Agregar </p> al final
 }
 
-// Manejar tecla Enter en el input
+// Limpiar chat
+clearChatButton.addEventListener("click", () => {
+    chatHistory.innerHTML = "";
+});
+
+// Manejar evento de tecla Enter
 searchInput.addEventListener("keypress", (event) => {
     if (event.key === "Enter") {
         sendMessage();
     }
 });
 
-// Manejar clic en el botón Enviar
+// Manejar clic en botón Enviar
 searchButton.addEventListener("click", sendMessage);
