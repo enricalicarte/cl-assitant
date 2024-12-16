@@ -43,8 +43,25 @@ async function sendMessage() {
             throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
         }
 
-        const data = await response.json();
-        const botMessage = data.output || "Sin respuesta del servidor.";
+        const contentType = response.headers.get("Content-Type");
+        let botMessage;
+
+        // Manejar respuestas JSON y HTML
+        if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+
+            // Manejar el caso de un array con una propiedad `html`
+            if (Array.isArray(data) && data[0]?.html) {
+                botMessage = data[0].html;
+            } else if (data.output) {
+                botMessage = data.output;
+            } else {
+                botMessage = "Formato de respuesta desconocido.";
+            }
+        } else {
+            // Si la respuesta no es JSON, tratarla como texto plano (HTML)
+            botMessage = await response.text();
+        }
 
         // Reemplazar el mensaje de carga con la respuesta del bot
         loadingMessage.innerHTML = formatMessageToHTML(botMessage);
@@ -234,3 +251,4 @@ searchInput.addEventListener("keypress", (event) => {
 
 // Manejar clic en el botón Enviar
 searchButton.addEventListener("click", sendMessage);
+
