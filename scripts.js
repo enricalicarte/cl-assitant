@@ -78,31 +78,6 @@ async function sendRating(question, answer, rating) {
     }
 }
 
-// Enviar comentario al Webhook
-async function sendComment(question, answer, rating, comment) {
-    try {
-        const response = await fetch("https://multiplicaenric.app.n8n.cloud/webhook-test/527dea54-5355-4717-bbb7-59ecd936269b", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                type: "comment",
-                question,
-                answer,
-                rating,
-                comment,
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Error al enviar el comentario: ${response.status} ${response.statusText}`);
-        }
-
-        console.log("Comentario enviado con éxito.");
-    } catch (error) {
-        console.error("Error al enviar el comentario:", error);
-    }
-}
-
 // Añadir mensaje al historial con formato HTML y sistema de valoración
 function addMessage(content, sender) {
     const messageDiv = document.createElement("div");
@@ -129,8 +104,6 @@ function addStarRating(parentElement, answer) {
     const question = [...chatHistory.querySelectorAll(".chat-message.user")]
         .pop()?.textContent.trim() || "Pregunta desconocida";
 
-    let isRated = false; // Para evitar múltiples valoraciones
-
     for (let i = 1; i <= 5; i++) {
         const star = document.createElement("span");
         star.className = "star";
@@ -139,67 +112,18 @@ function addStarRating(parentElement, answer) {
 
         // Manejar el clic en la estrella
         star.addEventListener("click", (event) => {
-            if (!isRated) { // Solo permite una valoración
-                const rating = parseInt(event.target.dataset.value, 10);
-                updateStarRating(starContainer, rating);
-                console.log(`Valoración seleccionada: ${rating}`);
-                sendRating(question, answer, rating);
-                isRated = true;
+            const rating = event.target.dataset.value;
+            updateStarRating(starContainer, rating);
+            console.log(`Valoración seleccionada: ${rating}`);
 
-                // Mostrar casilla de comentarios si la valoración es baja
-                if (rating <= 3) {
-                    showCommentBox(starContainer, question, answer, rating);
-                }
-            }
+            // Enviar valoración al Webhook
+            sendRating(question, answer, rating);
         });
 
         starContainer.appendChild(star);
     }
 
     parentElement.appendChild(starContainer);
-}
-
-// Mostrar casilla de comentarios
-function showCommentBox(container, question, answer, rating) {
-    const commentBox = document.createElement("div");
-    commentBox.className = "comment-box";
-
-    const textArea = document.createElement("textarea");
-    textArea.placeholder = "Por favor, dinos cómo podemos mejorar...";
-    textArea.rows = 3;
-    textArea.style.width = "100%"; // Ajusta el ancho al mensaje anterior
-    textArea.style.padding = "10px";
-    textArea.style.border = "1px solid #ccc";
-    textArea.style.borderRadius = "8px";
-    textArea.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
-    textArea.style.fontSize = "14px";
-    textArea.style.resize = "none";
-
-    const submitButton = document.createElement("button");
-    submitButton.textContent = "Enviar comentario";
-    submitButton.style.marginTop = "10px";
-    submitButton.style.padding = "8px 12px";
-    submitButton.style.border = "none";
-    submitButton.style.borderRadius = "8px";
-    submitButton.style.backgroundColor = "#007bff";
-    submitButton.style.color = "white";
-    submitButton.style.fontSize = "14px";
-    submitButton.style.cursor = "pointer";
-    submitButton.addEventListener("click", () => {
-        const comment = textArea.value.trim();
-        if (comment) {
-            sendComment(question, answer, rating, comment);
-            commentBox.innerHTML = "<p>Gracias por tu comentario.</p>";
-            commentBox.style.color = "#007bff";
-            commentBox.style.fontSize = "14px";
-        } else {
-            alert("Por favor, escribe un comentario antes de enviar.");
-        }
-    });
-
-    commentBox.appendChild(textArea);
-    commentBox.appendChild(submitButton);
-    container.appendChild(commentBox);
 }
 
 // Actualizar visualización de estrellas seleccionadas
@@ -240,25 +164,3 @@ searchInput.addEventListener("keypress", (event) => {
 
 // Manejar clic en botón Enviar
 searchButton.addEventListener("click", sendMessage);
-function showCommentBox(container, question, answer, rating) {
-    console.log("Casilla de comentarios añadida al contenedor:", container);
-    const commentBox = document.createElement("div");
-    commentBox.className = "comment-box";
-    const textArea = document.createElement("textarea");
-    textArea.placeholder = "Por favor, dinos cómo podemos mejorar...";
-    textArea.rows = 3;
-    const submitButton = document.createElement("button");
-    submitButton.textContent = "Enviar comentario";
-    submitButton.addEventListener("click", () => {
-        const comment = textArea.value.trim();
-        if (comment) {
-            sendComment(question, answer, rating, comment);
-            commentBox.innerHTML = "<p>Gracias por tu comentario.</p>";
-        } else {
-            alert("Por favor, escribe un comentario antes de enviar.");
-        }
-    });
-    commentBox.appendChild(textArea);
-    commentBox.appendChild(submitButton);
-    container.appendChild(commentBox);
-}
